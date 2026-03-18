@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCard, CardStyle } from '../context/CardContext';
-import { CreditCard, Palette, Type, Layers, CheckCircle2 } from 'lucide-react';
+import { CreditCard, Palette, Type, Layers, CheckCircle2, Loader2, Maximize2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function Sidebar() {
   const { state, updateState } = useCard();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -14,6 +17,20 @@ export function Sidebar() {
 
   const handleStyleChange = (style: CardStyle) => {
     updateState({ cardStyle: style });
+  };
+
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      
+      // Reset success state after a few seconds
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 4000);
+    }, 2000);
   };
 
   return (
@@ -95,7 +112,7 @@ export function Sidebar() {
         <section className="space-y-4">
           <h3 className="text-[10px] font-mono text-black/40 uppercase tracking-widest flex items-center gap-2">
             <Layers className="w-3 h-3" />
-            Material
+            Material & Dimensions
           </h3>
           
           <div className="grid grid-cols-3 gap-2">
@@ -112,6 +129,26 @@ export function Sidebar() {
                 {style}
               </button>
             ))}
+          </div>
+
+          <div className="pt-2">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-mono text-black/60 uppercase flex items-center gap-2">
+                <Maximize2 className="w-3 h-3" />
+                Thickness
+              </label>
+              <span className="text-[10px] text-black/60 font-mono">{state.cardThickness?.toFixed(3) || '0.015'}</span>
+            </div>
+            <input
+              type="range"
+              name="cardThickness"
+              min="0.005"
+              max="0.05"
+              step="0.001"
+              value={state.cardThickness || 0.015}
+              onChange={(e) => updateState({ cardThickness: parseFloat(e.target.value) })}
+              className="w-full h-1 bg-black/10 rounded-lg appearance-none cursor-pointer accent-[#FF5722]"
+            />
           </div>
         </section>
 
@@ -168,10 +205,35 @@ export function Sidebar() {
         </section>
       </div>
 
-      <div className="p-6 border-t border-black/10 bg-white/50 backdrop-blur-sm">
-        <button className="w-full bg-[#111111] text-white text-[10px] font-mono uppercase tracking-widest py-4 hover:bg-black/80 transition-colors flex items-center justify-center gap-2">
-          <CheckCircle2 className="w-4 h-4" />
-          Submit for Production
+      <div className="p-6 border-t border-black/10 bg-white/50 backdrop-blur-sm relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          {isSuccess ? (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute inset-0 flex flex-col items-center justify-center bg-[#4CAF50] text-white z-10"
+            >
+              <CheckCircle2 className="w-6 h-6 mb-1" />
+              <span className="text-[10px] font-mono uppercase tracking-widest text-center px-4">
+                Submitted successfully!<br/>We will get back to you shortly.
+              </span>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        <button 
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full bg-[#111111] text-white text-[10px] font-mono uppercase tracking-widest py-4 hover:bg-black/80 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4" />
+          )}
+          {isSubmitting ? 'Processing...' : 'Submit for Production'}
         </button>
       </div>
     </div>

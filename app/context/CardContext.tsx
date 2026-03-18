@@ -14,6 +14,7 @@ export interface CardState {
   color2: string;
   textColor: string;
   bankName: string;
+  cardThickness: number;
 }
 
 interface CardContextType {
@@ -31,6 +32,7 @@ const defaultState: CardState = {
   color2: '#FF5722',
   textColor: '#ffffff',
   bankName: 'hallelx2 bank',
+  cardThickness: 0.015,
 };
 
 const CardContext = createContext<CardContextType | undefined>(undefined);

@@ -12,10 +12,10 @@ export function BankCard() {
   const groupRef = useRef<THREE.Group>(null);
 
   // Rotate card slowly
-  useFrame((state, delta) => {
+  useFrame((threeState, delta) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.2;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      groupRef.current.rotation.x = Math.sin(threeState.clock.elapsedTime * 0.5) * 0.1;
     }
   });
 
@@ -58,15 +58,15 @@ export function BankCard() {
 
   const cardWidth = 8.56;
   const cardHeight = 5.398;
-  const cardThickness = 0.015;
+  const cardThickness = state.cardThickness || 0.015;
 
   return (
     <group ref={groupRef}>
       {/* Card Body */}
       <RoundedBox
         args={[cardWidth, cardHeight, cardThickness]}
-        radius={0.3}
-        smoothness={4}
+        radius={0.2}
+        smoothness={2}
       >
         <meshPhysicalMaterial {...materialProps} />
       </RoundedBox>
@@ -81,7 +81,6 @@ export function BankCard() {
             color={state.textColor}
             anchorX="left"
             anchorY="top"
-            font="/fonts/roboto-mono-latin-400-normal.woff"
             letterSpacing={0.05}
           >
             hallel
@@ -89,10 +88,9 @@ export function BankCard() {
           <Text
             position={[1.35, 0, 0]}
             fontSize={0.35}
-            color={state.textColor}
+            color="#FF5722"
             anchorX="left"
             anchorY="top"
-            font="/fonts/orbitron-latin-700-normal.woff"
             fontWeight="bold"
             letterSpacing={0.05}
           >
@@ -129,7 +127,6 @@ export function BankCard() {
           color={state.textColor}
           anchorX="left"
           anchorY="middle"
-          font="/fonts/roboto-mono-latin-400-normal.woff"
           letterSpacing={0.15}
         >
           {state.cardNumber || '#### #### #### ####'}
@@ -142,7 +139,6 @@ export function BankCard() {
           color={state.textColor}
           anchorX="left"
           anchorY="bottom"
-          font="/fonts/roboto-mono-latin-400-normal.woff"
           letterSpacing={0.1}
         >
           {state.cardHolder || 'CARD HOLDER'}
@@ -156,7 +152,6 @@ export function BankCard() {
             color={state.textColor}
             anchorX="right"
             anchorY="bottom"
-            font="/fonts/roboto-mono-latin-400-normal.woff"
           >
             VALID{'\n'}THRU
           </Text>
@@ -166,7 +161,6 @@ export function BankCard() {
             color={state.textColor}
             anchorX="left"
             anchorY="bottom"
-            font="/fonts/roboto-mono-latin-400-normal.woff"
           >
             {state.expiry || 'MM/YY'}
           </Text>
@@ -188,7 +182,6 @@ export function BankCard() {
             color={state.textColor}
             anchorX="center"
             anchorY="middle"
-            font="/fonts/roboto-mono-latin-400-normal.woff"
             fontWeight="bold"
           >
             mastercard
@@ -222,7 +215,6 @@ export function BankCard() {
             color="#000000"
             anchorX="center"
             anchorY="middle"
-            font="/fonts/roboto-mono-latin-400-normal.woff"
           >
             {state.cvv || '123'}
           </Text>
@@ -231,7 +223,16 @@ export function BankCard() {
         {/* Hologram Placeholder (Security Feature) */}
         <mesh position={[cardWidth / 2 - 1.2, -cardHeight / 2 + 1.0, 0]}>
           <planeGeometry args={[1.2, 0.8]} />
-          <meshStandardMaterial color="#cccccc" metalness={1} roughness={0.1} />
+          <meshPhysicalMaterial 
+            color="#dddddd" 
+            metalness={0.9} 
+            roughness={0.1} 
+            iridescence={1} 
+            iridescenceIOR={1.5} 
+            iridescenceThicknessRange={[100, 400]} 
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+          />
         </mesh>
         
         {/* Support Text */}
@@ -241,7 +242,6 @@ export function BankCard() {
           color={state.textColor}
           anchorX="center"
           anchorY="middle"
-          font="/fonts/roboto-mono-latin-400-normal.woff"
         >
           This card is issued by hallelx2 bank pursuant to a license by Mastercard International Incorporated.
         </Text>

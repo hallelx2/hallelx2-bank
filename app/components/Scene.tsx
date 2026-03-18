@@ -25,8 +25,8 @@ export function Scene() {
         
         <Suspense fallback={<Loader />}>
           <BankCard />
-          <Environment preset="city" />
-          <ContactShadows position={[0, -4.5, 0]} opacity={0.4} scale={20} blur={2} far={4.5} />
+          <Environment preset="city" resolution={256} />
+          <ContactShadows position={[0, -4.5, 0]} opacity={0.3} scale={15} blur={1.5} far={4.5} resolution={256} frames={1} />
         </Suspense>
         
         <OrbitControls 
