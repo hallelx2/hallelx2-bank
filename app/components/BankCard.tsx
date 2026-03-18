@@ -58,21 +58,46 @@ export function BankCard() {
 
   const cardWidth = 8.56;
   const cardHeight = 5.398;
-  const cardThickness = state.cardThickness || 0.015;
+  const cardThickness = state.cardThickness || 0.005;
+
+  const cardShape = useMemo(() => {
+    const shape = new THREE.Shape();
+    const w = cardWidth;
+    const h = cardHeight;
+    const r = 0.318; // 3.18mm corner radius
+    
+    shape.moveTo(-w/2 + r, -h/2);
+    shape.lineTo(w/2 - r, -h/2);
+    shape.quadraticCurveTo(w/2, -h/2, w/2, -h/2 + r);
+    shape.lineTo(w/2, h/2 - r);
+    shape.quadraticCurveTo(w/2, h/2, w/2 - r, h/2);
+    shape.lineTo(-w/2 + r, h/2);
+    shape.quadraticCurveTo(-w/2, h/2, -w/2, h/2 - r);
+    shape.lineTo(-w/2, -h/2 + r);
+    shape.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+    
+    return shape;
+  }, [cardWidth, cardHeight]);
+
+  const extrudeSettings = useMemo(() => ({
+    depth: cardThickness,
+    bevelEnabled: true,
+    bevelSegments: 2,
+    steps: 1,
+    bevelSize: 0.002,
+    bevelThickness: 0.001
+  }), [cardThickness]);
 
   return (
     <group ref={groupRef}>
       {/* Card Body */}
-      <RoundedBox
-        args={[cardWidth, cardHeight, cardThickness]}
-        radius={0.2}
-        smoothness={2}
-      >
+      <mesh position={[0, 0, -cardThickness / 2]}>
+        <extrudeGeometry args={[cardShape, extrudeSettings]} />
         <meshPhysicalMaterial {...materialProps} />
-      </RoundedBox>
+      </mesh>
 
       {/* FRONT OF CARD */}
-      <group position={[0, 0, cardThickness / 2 + 0.001]}>
+      <group position={[0, 0, cardThickness / 2 + 0.002]}>
         {/* Hallelx Bank Branding */}
         <group position={[-cardWidth / 2 + 0.6, cardHeight / 2 - 0.6, 0]}>
           <Text
@@ -81,18 +106,18 @@ export function BankCard() {
             color={state.textColor}
             anchorX="left"
             anchorY="top"
-            letterSpacing={0.05}
+            letterSpacing={0.01}
           >
             hallel
           </Text>
           <Text
-            position={[1.35, 0, 0]}
+            position={[0.88, 0, 0]}
             fontSize={0.35}
             color="#FF5722"
             anchorX="left"
             anchorY="top"
             fontWeight="bold"
-            letterSpacing={0.05}
+            letterSpacing={0.01}
           >
             x2
           </Text>
@@ -190,7 +215,7 @@ export function BankCard() {
       </group>
 
       {/* BACK OF CARD */}
-      <group position={[0, 0, -cardThickness / 2 - 0.001]} rotation={[0, Math.PI, 0]}>
+      <group position={[0, 0, -cardThickness / 2 - 0.002]} rotation={[0, Math.PI, 0]}>
         {/* Magnetic Stripe */}
         <mesh position={[0, cardHeight / 2 - 1.0, 0]}>
           <planeGeometry args={[cardWidth, 0.8]} />

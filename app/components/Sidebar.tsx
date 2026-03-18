@@ -137,15 +137,15 @@ export function Sidebar() {
                 <Maximize2 className="w-3 h-3" />
                 Thickness
               </label>
-              <span className="text-[10px] text-black/60 font-mono">{state.cardThickness?.toFixed(3) || '0.015'}</span>
+              <span className="text-[10px] text-black/60 font-mono">{state.cardThickness?.toFixed(3) || '0.005'}</span>
             </div>
             <input
               type="range"
               name="cardThickness"
-              min="0.005"
-              max="0.05"
+              min="0.001"
+              max="0.02"
               step="0.001"
-              value={state.cardThickness || 0.015}
+              value={state.cardThickness || 0.005}
               onChange={(e) => updateState({ cardThickness: parseFloat(e.target.value) })}
               className="w-full h-1 bg-black/10 rounded-lg appearance-none cursor-pointer accent-[#FF5722]"
             />

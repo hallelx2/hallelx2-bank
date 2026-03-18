@@ -32,7 +32,7 @@ const defaultState: CardState = {
   color2: '#FF5722',
   textColor: '#ffffff',
   bankName: 'hallelx2 bank',
-  cardThickness: 0.015,
+  cardThickness: 0.005,
 };
 
 const CardContext = createContext<CardContextType | undefined>(undefined);
